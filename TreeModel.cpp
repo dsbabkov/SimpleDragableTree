@@ -12,41 +12,53 @@ TreeModel::TreeModel(QObject *parent)
 
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-    // FIXME: Implement me!
-    return {};
+    TreeNode *parentNode = parent.isValid() ?
+                static_cast<TreeNode *>(parent.internalPointer()) :
+                rootNode_.get();
+
+    return createIndex(row, column, parentNode->child(row).get());
 }
 
 QModelIndex TreeModel::parent(const QModelIndex &index) const
 {
-    // FIXME: Implement me!
-    return {};
+    if (!index.isValid()){
+        return {};
+    }
+
+    TreeNode *node = static_cast<TreeNode *>(index.internalPointer());
+    TreeNode::ParentPtr parentNode = node->parent();
+
+    if (parentNode.expired()){
+        return {};
+    }
+
+    std::shared_ptr<TreeNode> lockedParentNode = parentNode.lock();
+    return createIndex(lockedParentNode->row(), 0, lockedParentNode.get());
 }
 
 int TreeModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return 0;
+    if (!parent.isValid()){
+        return rootNode_->childrenCount();
+    }
 
-    // FIXME: Implement me!
-    return 0;
+    TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
+    return parentNode->childrenCount();
 }
 
-int TreeModel::columnCount(const QModelIndex &parent) const
+int TreeModel::columnCount(const QModelIndex &/*parent*/) const
 {
-    if (!parent.isValid())
-        return 0;
-
-    // FIXME: Implement me!
-    return 0;
+    return 1;
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() ||
+            role != Qt::DisplayRole) {
         return QVariant();
+    }
 
-    // FIXME: Implement me!
-    return QVariant();
+    return static_cast<TreeNode *>(index.internalPointer())->name;
 }
 
 void TreeModel::fillTreeWithData()
