@@ -14,9 +14,12 @@ public:
     const QString name;
 
 public:
-    TreeNode(const QString &name, ParentPtr parent);
+    explicit TreeNode(const QString &name);
 
     void addChild(const ChildPtr &child);
+
+private:
+    void setParent(const ParentPtr &parent);
 
 private:
     ParentPtr parent_;
