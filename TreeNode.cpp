@@ -6,6 +6,11 @@ TreeNode::TreeNode(const QString &name)
 {
 }
 
+int TreeNode::childrenCount() const
+{
+    return children_.count();
+}
+
 void TreeNode::addChild(const TreeNode::ChildPtr &child)
 {
     children_ << child;
