@@ -1,7 +1,9 @@
 #include "TreeModel.h"
+#include "TreeNode.h"
 
 TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
+    , rootNode_{std::make_shared<TreeNode>("ROOT_NODE", TreeNode::ParentPtr{})}
 {
 }
 

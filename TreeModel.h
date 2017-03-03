@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QAbstractItemModel>
+#include <memory>
+
+class TreeNode;
 
 class TreeModel : public QAbstractItemModel
 {
@@ -17,4 +20,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+private:
+    std::shared_ptr<TreeNode> rootNode_;
 };
