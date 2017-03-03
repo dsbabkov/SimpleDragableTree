@@ -6,8 +6,10 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    TreeModel.cpp
 
-HEADERS  += MainWindow.h
+HEADERS  += MainWindow.h \
+    TreeModel.h
 
 FORMS    += MainWindow.ui
