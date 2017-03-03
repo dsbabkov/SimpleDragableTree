@@ -26,6 +26,7 @@ public:
     virtual QStringList mimeTypes() const override;
     virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 
 private:
     void fillTreeWithData();

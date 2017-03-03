@@ -1,5 +1,6 @@
 #include "TreeModel.h"
 #include "TreeNode.h"
+#include <QDataStream>
 #include <QMimeData>
 #include <QByteArray>
 #include <QStack>
@@ -105,12 +106,30 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
 bool TreeModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, const QModelIndex &parent) const
 {
     if (!parent.isValid() || // root is not drop enabled
+            action != Qt::MoveAction ||
             !data->hasFormat(mimeType) ||
-            row == -1 ||
-            action != Qt::MoveAction){
+            row < 0 ||
+            row > rowCount(parent)){
         return false;
     }
 
+    return true;
+}
+
+bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int /*column*/, const QModelIndex &parent)
+{
+    const QModelIndexList &indexes = restoreIndexes(data->data(mimeType));
+    if (indexes.isEmpty()){
+        return false;
+    }
+
+    const QModelIndex &index = indexes.first();
+
+    beginMoveRows(index.parent(), index.row(), index.row(), parent, rowCount(parent));
+    TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
+    TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
+    parentNode->addChild(child);
+    endMoveRows();
     return true;
 }
 
