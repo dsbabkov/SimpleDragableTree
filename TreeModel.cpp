@@ -107,6 +107,18 @@ QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
     return result;
 }
 
+bool TreeModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, const QModelIndex &parent) const
+{
+    if (!parent.isValid() || // root is not drop enabled
+            !data->hasFormat(mimeType) ||
+            row == -1 ||
+            action != Qt::MoveAction){
+        return false;
+    }
+
+    return true;
+}
+
 void TreeModel::fillTreeWithData()
 {
     const std::vector<TreeNode::ChildPtr> groups = {

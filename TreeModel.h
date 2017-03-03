@@ -25,6 +25,7 @@ public:
     virtual Qt::DropActions supportedDropActions() const override;
     virtual QStringList mimeTypes() const override;
     virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
 
 private:
     void fillTreeWithData();
