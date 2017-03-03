@@ -1,5 +1,7 @@
 #include "TreeModel.h"
 #include "TreeNode.h"
+#include <QMimeData>
+#include <QByteArray>
 
 static constexpr char mimeType[] = "MyNode";
 
@@ -90,6 +92,19 @@ Qt::DropActions TreeModel::supportedDropActions() const
 QStringList TreeModel::mimeTypes() const
 {
     return {mimeType};
+}
+
+QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
+{
+    QByteArray data;
+    for (const QModelIndex &index: indexes){
+        void *nodePointer = index.internalPointer();
+        data.append(reinterpret_cast<char *>(&nodePointer), sizeof(nodePointer));
+    }
+
+    QMimeData *result = new QMimeData();
+    result->setData(mimeType, data);
+    return result;
 }
 
 void TreeModel::fillTreeWithData()

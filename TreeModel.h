@@ -24,11 +24,11 @@ public:
 
     virtual Qt::DropActions supportedDropActions() const override;
     virtual QStringList mimeTypes() const override;
+    virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
 
 private:
     void fillTreeWithData();
 
 private:
     std::shared_ptr<TreeNode> rootNode_;
-
 };
