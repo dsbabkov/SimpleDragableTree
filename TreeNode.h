@@ -16,6 +16,8 @@ public:
 public:
     TreeNode(const QString &name, ParentPtr parent);
 
+    void addChild(const ChildPtr &child);
+
 private:
     ParentPtr parent_;
     QVector<ChildPtr> children_;
