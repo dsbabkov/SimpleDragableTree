@@ -18,6 +18,7 @@ public:
 
     int childrenCount() const;
     void addChild(const ChildPtr &child);
+    ChildPtr child(int row) const;
 
 private:
     void setParent(const ParentPtr &parent);
