@@ -17,6 +17,7 @@ public:
     explicit TreeNode(const QString &name);
 
     ParentPtr parent() const;
+    int row() const;
 
     int childrenCount() const;
     void addChild(const ChildPtr &child);

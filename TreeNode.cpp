@@ -11,6 +11,16 @@ TreeNode::ParentPtr TreeNode::parent() const
     return parent_;
 }
 
+int TreeNode::row() const
+{
+    if (parent_.expired()){
+        return -1;
+    }
+
+    return parent_.lock()->children_
+            .indexOf(std::const_pointer_cast<TreeNode>(shared_from_this()));
+}
+
 int TreeNode::childrenCount() const
 {
     return children_.count();
