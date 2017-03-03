@@ -1,6 +1,8 @@
 #include "TreeModel.h"
 #include "TreeNode.h"
 
+static constexpr char mimeType[] = "MyNode";
+
 using namespace std;
 
 TreeModel::TreeModel(QObject *parent)
@@ -64,6 +66,11 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 Qt::DropActions TreeModel::supportedDropActions() const
 {
     return Qt::MoveAction;
+}
+
+QStringList TreeModel::mimeTypes() const
+{
+    return {mimeType};
 }
 
 void TreeModel::fillTreeWithData()

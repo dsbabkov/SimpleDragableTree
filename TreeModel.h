@@ -22,10 +22,12 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     virtual Qt::DropActions supportedDropActions() const override;
+    virtual QStringList mimeTypes() const override;
 
 private:
     void fillTreeWithData();
 
 private:
     std::shared_ptr<TreeNode> rootNode_;
+
 };
