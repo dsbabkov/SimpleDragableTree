@@ -61,6 +61,11 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     return static_cast<TreeNode *>(index.internalPointer())->name;
 }
 
+Qt::DropActions TreeModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
 void TreeModel::fillTreeWithData()
 {
     const std::vector<TreeNode::ChildPtr> groups = {

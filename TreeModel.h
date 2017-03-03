@@ -21,6 +21,8 @@ public:
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    virtual Qt::DropActions supportedDropActions() const override;
+
 private:
     void fillTreeWithData();
 
