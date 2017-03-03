@@ -63,6 +63,25 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     return static_cast<TreeNode *>(index.internalPointer())->name;
 }
 
+Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid()){
+        return {};
+    }
+
+    Qt::ItemFlags result = Qt::ItemIsEnabled |
+            Qt::ItemIsSelectable;
+
+    if (!index.parent().isValid()){ // Group nodes cann accept drop
+        result |= Qt::ItemIsDropEnabled;
+    }
+    else{   //leaves can be draged
+        result |= Qt::ItemIsDragEnabled;
+    }
+
+    return result;
+}
+
 Qt::DropActions TreeModel::supportedDropActions() const
 {
     return Qt::MoveAction;
