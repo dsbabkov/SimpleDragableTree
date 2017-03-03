@@ -2,6 +2,7 @@
 #include "TreeNode.h"
 #include <QMimeData>
 #include <QByteArray>
+#include <QStack>
 
 static constexpr char mimeType[] = "MyNode";
 
@@ -136,4 +137,46 @@ void TreeModel::fillTreeWithData()
                         );
         }
     }
+}
+
+QByteArray TreeModel::saveIndexes(const QModelIndexList &indexes)
+{
+    QByteArray result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+
+    for (const QModelIndex &index: indexes){
+        QModelIndex localIndex = index;
+        QStack<int> indexParentStack;
+        while (localIndex.isValid()){
+            indexParentStack << localIndex.row();
+            localIndex = localIndex.parent();
+        }
+
+        stream << indexParentStack.size();
+        while (!indexParentStack.isEmpty()){
+            stream << indexParentStack.pop();
+        }
+    }
+    return result;
+}
+
+QModelIndexList TreeModel::restoreIndexes(QByteArray data)
+{
+    QModelIndexList result;
+    QDataStream stream(&data, QIODevice::ReadOnly);
+
+    while(!stream.atEnd()){
+        int childDepth = 0;
+        stream >> childDepth;
+
+        QModelIndex currentIndex = {};
+        for (int i = 0; i < childDepth; ++i){
+            int row = 0;
+            stream >> row;
+            currentIndex = index(row, 0, currentIndex);
+        }
+        result << currentIndex;
+    }
+
+    return result;
 }

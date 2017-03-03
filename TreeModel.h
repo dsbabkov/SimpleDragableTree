@@ -30,6 +30,9 @@ public:
 private:
     void fillTreeWithData();
 
+    static QByteArray saveIndexes(const QModelIndexList &indexes);
+    QModelIndexList restoreIndexes(QByteArray data);
+
 private:
     std::shared_ptr<TreeNode> rootNode_;
 };
