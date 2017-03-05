@@ -29,16 +29,17 @@ int TreeNode::childrenCount() const
 void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
 {
     const ParentPtr lastParent = child->parent();
-    if (!lastParent.expired()){
-        const auto &lockedParent = lastParent.lock();
-        lockedParent->removeChild(child);
-    }
 
     if (position == -1){
         children_ << child;
     }
     else{
         children_.insert(position, child);
+    }
+
+    if (!lastParent.expired()){
+        const auto &lockedParent = lastParent.lock();
+        lockedParent->removeChild(child);
     }
     child->setParent(shared_from_this());
 }
