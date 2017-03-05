@@ -127,8 +127,8 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
 
     beginMoveRows(index.parent(), index.row(), index.row(), parent, rowCount(parent));
     TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
-    TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
-    parentNode->addChild(child);
+    const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
+    parentNode->addChild(child, row);
     endMoveRows();
     return true;
 }
