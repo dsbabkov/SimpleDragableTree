@@ -21,6 +21,7 @@ public:
 
     int childrenCount() const;
     void addChild(const ChildPtr &child);
+    void removeChild(const ChildPtr &child);
     ChildPtr child(int row) const;
 
 private:

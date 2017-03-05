@@ -32,6 +32,14 @@ void TreeNode::addChild(const TreeNode::ChildPtr &child)
     child->setParent(shared_from_this());
 }
 
+void TreeNode::removeChild(const TreeNode::ChildPtr &child)
+{
+    const int pos = children_.indexOf(child);
+    if (pos != -1){
+        children_.takeAt(pos)->setParent({});
+    }
+}
+
 TreeNode::ChildPtr TreeNode::child(int row) const
 {
     return children_.at(row);
