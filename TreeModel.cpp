@@ -97,14 +97,8 @@ QStringList TreeModel::mimeTypes() const
 
 QMimeData *TreeModel::mimeData(const QModelIndexList &indexes) const
 {
-    QByteArray data;
-    for (const QModelIndex &index: indexes){
-        void *nodePointer = index.internalPointer();
-        data.append(reinterpret_cast<char *>(&nodePointer), sizeof(nodePointer));
-    }
-
     QMimeData *result = new QMimeData();
-    result->setData(mimeType, data);
+    result->setData(mimeType, saveIndexes(indexes));
     return result;
 }
 
