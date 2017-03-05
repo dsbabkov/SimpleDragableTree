@@ -4,6 +4,7 @@
 #include <QMimeData>
 #include <QByteArray>
 #include <QStack>
+#include <algorithm>
 
 static constexpr char mimeType[] = "MyNode";
 
@@ -118,18 +119,20 @@ bool TreeModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, in
 
 bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int /*column*/, const QModelIndex &parent)
 {
-    const QModelIndexList &indexes = restoreIndexes(data->data(mimeType));
+    QModelIndexList indexes = restoreIndexes(data->data(mimeType));
     if (indexes.isEmpty()){
         return false;
     }
 
-    const QModelIndex &index = indexes.first();
+    std::sort(indexes.rbegin(), indexes.rend());
 
-    beginMoveRows(index.parent(), index.row(), index.row(), parent, rowCount(parent));
-    TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
-    const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
-    parentNode->addChild(child, row);
-    endMoveRows();
+    for (const QModelIndex &index: indexes){
+        beginMoveRows(index.parent(), index.row(), index.row(), parent, rowCount(parent));
+        TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
+        const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
+        parentNode->addChild(child, row);
+        endMoveRows();
+    }
     return true;
 }
 
