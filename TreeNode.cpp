@@ -1,4 +1,5 @@
 #include "TreeNode.h"
+#include <set>
 
 TreeNode::TreeNode(const QString &name)
     : name{name}
@@ -44,6 +45,30 @@ void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
     child->setParent(shared_from_this());
 }
 
+void TreeNode::insertChildren(const QList<TreeNode::ChildPtr> &newChildren, int position)
+{
+    if (position == -1){
+        position = children_.count();
+    }
+
+    std::set<TreeNode *> oldParents;
+
+    for (ChildPtr child: newChildren){
+        ParentPtr parent = child->parent();
+        if (!parent.expired()){
+            LockedParentPtr lockedParent = parent.lock();
+            oldParents.insert(lockedParent.get());
+            lockedParent->resetChild(child->row());
+        }
+
+        children_.insert(position++, child);
+    }
+
+    for (TreeNode *oldParent: oldParents){
+        oldParent->removeNullChildren();
+    }
+}
+
 void TreeNode::removeChild(const TreeNode::ChildPtr &child)
 {
     const int pos = children_.indexOf(child);
@@ -60,4 +85,20 @@ TreeNode::ChildPtr TreeNode::child(int row) const
 void TreeNode::setParent(const TreeNode::ParentPtr &parent)
 {
     parent_ = parent;
+}
+
+void TreeNode::resetChild(int number)
+{
+    ChildPtr &child = children_[number];
+    child->setParent({});
+    child.reset();
+}
+
+void TreeNode::removeNullChildren()
+{
+    auto it = std::remove_if(children_.begin(), children_.end(), [](ChildPtr &child){
+        return !child;
+    });
+
+    children_.erase(it, children_.end());
 }
