@@ -69,13 +69,6 @@ void TreeNode::setParent(const TreeNode::ParentPtr &parent)
     parent_ = parent;
 }
 
-void TreeNode::resetChild(int number)
-{
-    ChildPtr &child = children_[number];
-    child->setParent({});
-    child.reset();
-}
-
 void TreeNode::moveChild(const TreeNode::ChildPtr &child, int newPosition)
 {
     int from = child->row();

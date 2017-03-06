@@ -30,7 +30,6 @@ public:
 
 private:
     void setParent(const ParentPtr &parent);
-    void resetChild(int number);
     void moveChild(const ChildPtr &child, int newPosition);
 
 private:
