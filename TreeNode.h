@@ -25,7 +25,6 @@ public:
 
     int childrenCount() const;
     void addChild(const ChildPtr &child, int position = -1);
-    void insertChildren(const QList<ChildPtr> &newChildren, int position = -1);
     void removeChild(const ChildPtr &child);
     ChildPtr child(int row) const;
 

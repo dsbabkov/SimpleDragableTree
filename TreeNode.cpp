@@ -51,30 +51,6 @@ void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
 
 }
 
-void TreeNode::insertChildren(const QList<TreeNode::ChildPtr> &newChildren, int position)
-{
-    if (position == -1){
-        position = children_.count();
-    }
-
-    std::set<TreeNode *> oldParents;
-
-    for (ChildPtr child: newChildren){
-        ParentPtr parent = child->parent();
-        if (!parent.expired()){
-            LockedParentPtr lockedParent = parent.lock();
-            oldParents.insert(lockedParent.get());
-            lockedParent->resetChild(child->row());
-        }
-
-        children_.insert(position++, child);
-    }
-
-    for (TreeNode *oldParent: oldParents){
-        oldParent->removeNullChildren();
-    }
-}
-
 void TreeNode::removeChild(const TreeNode::ChildPtr &child)
 {
     const int pos = children_.indexOf(child);
