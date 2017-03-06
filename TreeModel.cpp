@@ -124,7 +124,17 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
         return false;
     }
 
-    std::sort(indexes.begin(), indexes.end());
+    std::sort(indexes.begin(), indexes.end(), [](const QModelIndex &left, const QModelIndex &right){
+        if (left.parent() < right.parent()){
+            return true;
+        }
+        else if (right.parent() < left.parent()){
+            return false;
+        }
+        else{
+            return left < right;
+        }
+    });
 
     int counter = -1;
     QVector<std::pair<TreeNode::ChildPtr, int>> parentSelectedChildrenFinalPosition;
