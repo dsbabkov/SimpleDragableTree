@@ -76,15 +76,6 @@ void TreeNode::resetChild(int number)
     child.reset();
 }
 
-void TreeNode::removeNullChildren()
-{
-    auto it = std::remove_if(children_.begin(), children_.end(), [](ChildPtr &child){
-        return !child;
-    });
-
-    children_.erase(it, children_.end());
-}
-
 void TreeNode::moveChild(const TreeNode::ChildPtr &child, int newPosition)
 {
     int from = child->row();
