@@ -34,6 +34,8 @@ private:
     static QByteArray saveIndexes(const QModelIndexList &indexes);
     QModelIndexList restoreIndexes(QByteArray data);
 
+    static void sortIndexes(QModelIndexList &indexes);
+
 private:
     std::shared_ptr<TreeNode> rootNode_;
 };
