@@ -8,7 +8,11 @@ class TreeNode: public std::enable_shared_from_this<TreeNode>
 {
 public:
     using ChildPtr = std::shared_ptr<TreeNode>;
+    using ConstChildPtr = std::shared_ptr<const TreeNode>;
     using ParentPtr = std::weak_ptr<TreeNode>;
+    using ConstParentPtr = std::weak_ptr<const TreeNode>;
+    using LockedParentPtr = ChildPtr;
+    using ConstLockedParentPtr = ConstChildPtr;
 
 public:
     const QString name;
