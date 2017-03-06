@@ -24,7 +24,7 @@ public:
     int row() const;
 
     int childrenCount() const;
-    void addChild(const ChildPtr &child, int position = -1);
+    void insertChild(const ChildPtr &child, int position = -1);
     void removeChild(const ChildPtr &child);
     ChildPtr child(int row) const;
 

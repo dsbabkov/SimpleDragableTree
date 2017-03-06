@@ -27,7 +27,7 @@ int TreeNode::childrenCount() const
     return children_.count();
 }
 
-void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
+void TreeNode::insertChild(const TreeNode::ChildPtr &child, int position)
 {
     const ParentPtr lastParent = child->parent();
 

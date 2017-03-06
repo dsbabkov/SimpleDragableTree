@@ -156,7 +156,7 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
 
         beginMoveRows(index.parent(), index.row(), index.row(), parent, row);
         const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
-        parentNode->addChild(child, row++);
+        parentNode->insertChild(child, row++);
         endMoveRows();
     }
 
@@ -165,7 +165,7 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
         const int srcRow = child->row();
         const int destRow = pair.second;
         beginMoveRows(parent, srcRow, srcRow, parent, destRow);
-        parentNode->addChild(child, destRow);
+        parentNode->insertChild(child, destRow);
         endMoveRows();
 
     }
@@ -182,10 +182,10 @@ void TreeModel::fillTreeWithData()
     };
 
     for (TreeNode::ChildPtr group: groups){
-        rootNode_->addChild(group);
+        rootNode_->insertChild(group);
 
         for(int i = 0; i < 5; ++i){
-            group->addChild(
+            group->insertChild(
                         make_shared<TreeNode>(QStringLiteral("Item %1 of %2").arg(i).arg(group->name))
                         );
         }
