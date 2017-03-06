@@ -124,15 +124,42 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
         return false;
     }
 
-    std::sort(indexes.rbegin(), indexes.rend());
+    std::sort(indexes.begin(), indexes.end());
 
+    int counter = -1;
+    QVector<std::pair<TreeNode::ChildPtr, int>> parentSelectedChildrenFinalPosition;
     for (const QModelIndex &index: indexes){
-        beginMoveRows(index.parent(), index.row(), index.row(), parent, rowCount(parent));
-        TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
+        ++counter;
+        if (index.parent() != parent){
+            continue;
+        }
+
+        parentSelectedChildrenFinalPosition << make_pair(static_cast<TreeNode *>(index.internalPointer())->shared_from_this(),
+                                               row + counter - parentSelectedChildrenFinalPosition.count());
+    }
+
+    TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
+    for (const QModelIndex &index: indexes){
+        if (index.parent() == parent){
+            continue;
+        }
+
+        beginMoveRows(index.parent(), index.row(), index.row(), parent, row);
         const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
-        parentNode->addChild(child, row);
+        parentNode->addChild(child, row++);
         endMoveRows();
     }
+
+    for (const std::pair<TreeNode::ChildPtr, int> &pair: parentSelectedChildrenFinalPosition){
+        const TreeNode::ChildPtr &child = pair.first;
+        const int srcRow = child->row();
+        const int destRow = pair.second;
+        beginMoveRows(parent, srcRow, srcRow, parent, destRow);
+        parentNode->addChild(child, destRow);
+        endMoveRows();
+
+    }
+
     return true;
 }
 
