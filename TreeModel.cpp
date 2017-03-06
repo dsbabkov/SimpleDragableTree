@@ -6,9 +6,34 @@
 #include <QStack>
 #include <algorithm>
 
+using namespace std;
+
+namespace {
 static constexpr char mimeType[] = "MyNode";
 
-using namespace std;
+struct MovableChild{
+    TreeNode::ChildPtr child;
+    QModelIndex parentIndex;
+};
+
+    QList<MovableChild> convertIndexesToMovableChildren(const QModelIndexList &indexes){
+        QList<MovableChild> result;
+        result.reserve(indexes.count());
+
+        for (const QModelIndex &index: indexes){
+            if (!index.isValid()){
+                result.append({nullptr, {}});
+                continue;
+            }
+
+            TreeNode *child = static_cast<TreeNode *>(index.internalPointer());
+            result.append({child->shared_from_this(), index.parent()});
+        }
+
+        return result;
+    }
+}
+
 
 TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
