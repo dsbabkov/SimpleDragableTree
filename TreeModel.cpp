@@ -12,7 +12,7 @@ namespace {
 static constexpr char mimeType[] = "MyNode";
 
 struct MovableChild{
-    TreeNode::ChildPtr child;
+    TreeNode::ChildPtr ptr;
     QModelIndex parentIndex;
 };
 
@@ -150,39 +150,19 @@ bool TreeModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, i
     }
 
     sortIndexes(indexes);
-
-    int counter = -1;
-    QVector<std::pair<TreeNode::ChildPtr, int>> parentSelectedChildrenFinalPosition;
-    for (const QModelIndex &index: indexes){
-        ++counter;
-        if (index.parent() != parent){
-            continue;
-        }
-
-        parentSelectedChildrenFinalPosition << make_pair(static_cast<TreeNode *>(index.internalPointer())->shared_from_this(),
-                                               row + counter - parentSelectedChildrenFinalPosition.count());
-    }
+    const QList<MovableChild> &childrenToMove = convertIndexesToMovableChildren(indexes);
 
     TreeNode *parentNode = static_cast<TreeNode *>(parent.internalPointer());
-    for (const QModelIndex &index: indexes){
-        if (index.parent() == parent){
-            continue;
-        }
+    for (const MovableChild &movableChild: childrenToMove){
+        const int srcRow = movableChild.ptr->row();
+        const bool interParentMove = movableChild.parentIndex == parent;
+        const bool incrementRow = !(interParentMove && srcRow < row);
 
-        beginMoveRows(index.parent(), index.row(), index.row(), parent, row);
-        const TreeNode::ChildPtr child = static_cast<TreeNode *>(index.internalPointer())->shared_from_this();
-        parentNode->insertChild(child, row++);
-        endMoveRows();
-    }
-
-    for (const std::pair<TreeNode::ChildPtr, int> &pair: parentSelectedChildrenFinalPosition){
-        const TreeNode::ChildPtr &child = pair.first;
-        const int srcRow = child->row();
-        const int destRow = pair.second;
-        beginMoveRows(parent, srcRow, srcRow, parent, destRow);
-        parentNode->insertChild(child, destRow);
+        beginMoveRows(movableChild.parentIndex, srcRow, srcRow, parent, row);
+        parentNode->insertChild(movableChild.ptr, row);
         endMoveRows();
 
+        row += incrementRow;
     }
 
     return true;
