@@ -31,6 +31,17 @@ void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
 {
     const ParentPtr lastParent = child->parent();
 
+    if (!lastParent.expired()){
+        const auto &lockedParent = lastParent.lock();
+        if (lockedParent.get() == this){
+            moveChild(child, position);
+            return;
+        }
+
+        lockedParent->removeChild(child);
+    }
+    child->setParent(shared_from_this());
+
     if (position == -1){
         children_ << child;
     }
@@ -38,11 +49,6 @@ void TreeNode::addChild(const TreeNode::ChildPtr &child, int position)
         children_.insert(position, child);
     }
 
-    if (!lastParent.expired()){
-        const auto &lockedParent = lastParent.lock();
-        lockedParent->removeChild(child);
-    }
-    child->setParent(shared_from_this());
 }
 
 void TreeNode::insertChildren(const QList<TreeNode::ChildPtr> &newChildren, int position)
@@ -101,4 +107,19 @@ void TreeNode::removeNullChildren()
     });
 
     children_.erase(it, children_.end());
+}
+
+void TreeNode::moveChild(const TreeNode::ChildPtr &child, int newPosition)
+{
+    int from = child->row();
+    if (from == newPosition){
+        return;
+    }
+
+    if (from < newPosition)
+    {
+        --newPosition;
+    }
+
+    children_.insert(newPosition, children_.takeAt(from));
 }
